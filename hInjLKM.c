@@ -467,7 +467,7 @@ static void send_log(void){
 
   if(!hinjSkb_out)
   {
-    printk(KERN_ERR "Failed to allocate Netlink message header\n");
+    printk(KERN_ERR "Failed to allocate Netlink message header.\n");
     return;
   } 
 
@@ -476,7 +476,7 @@ static void send_log(void){
   strncpy(nlmsg_data(hinjNlh),hinjMsg,hinjMsg_size);
 
   if(nlmsg_unicast(hinjNl_sk,hinjSkb_out,hinjPid)<0){
-    printk(KERN_INFO "Error while sending logging information to userland\n");
+    printk(KERN_INFO "Error while sending logging information to userland.\n");
   }
   strcpy(hinjLog, "");
 }
@@ -668,7 +668,7 @@ static void hello_nl_recv_msg(struct sk_buff *skb) {
   hinjSkb_out = nlmsg_new(hinjMsg_size,0);
 
   if(!hinjSkb_out){
-    printk(KERN_ERR "Failed to allocate new skb\n");
+    printk(KERN_ERR "Failed to allocate new skb.\n");
     return;
   } 
   hinjNlh=nlmsg_put(hinjSkb_out,0,0,NLMSG_DONE,hinjMsg_size,0);  
@@ -676,7 +676,7 @@ static void hello_nl_recv_msg(struct sk_buff *skb) {
   strncpy(nlmsg_data(hinjNlh),hinjMsg,hinjMsg_size);
 
   if(nlmsg_unicast(hinjNl_sk,hinjSkb_out,hinjPid)<0){
-      printk(KERN_INFO "Error while sending back to user\n");
+      printk(KERN_INFO "Error while sending back to user.\n");
   }
 }
 
