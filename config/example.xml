@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario rate="1" repeat="100">
+ <hcall name="grant_table_op" repeat="1">
+  <parameter number="1">
+   <value type="int">8</value>
+  </parameter>
+  <parameter number="2">
+   <struct name="gnttab_set_version">
+    <member name="version">
+     <value type="int">1</value>
+    </member>
+   </struct>
+  </parameter>
+ </hcall>
+ <hcall name="grant_table_op" repeat="1">
+  <parameter number="1">
+   <value type="int">8</value>
+  </parameter>
+  <parameter number="2">
+   <struct name="gnttab_set_version">
+    <member name="version">
+     <value type="int">2</value>
+    </member>
+   </struct>
+  </parameter>
+ </hcall>
+</scenario>

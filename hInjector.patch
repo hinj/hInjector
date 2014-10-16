@@ -1,0 +1,804 @@
+diff -uNr xen-4.4.1/tools/include/xen-foreign/reference.size hinjector_xen/tools/include/xen-foreign/reference.size
+--- xen-4.4.1/tools/include/xen-foreign/reference.size	2014-10-15 08:48:04.861957000 -0400
++++ hinjector_xen/tools/include/xen-foreign/reference.size	2014-10-15 07:59:45.489957000 -0400
+@@ -9,6 +9,6 @@
+ arch_vcpu_info            |       0       0      24      16
+ vcpu_time_info            |      32      32      32      32
+ vcpu_info                 |      48      48      64      64
+-arch_shared_info          |       0       0     268     280
+-shared_info               |    1088    1088    2584    3368
++arch_shared_info          |       0       0     272     288
++shared_info               |    1088    1088    2588    3376
+ 
+diff -uNr xen-4.4.1/xen/arch/x86/compat.c hinjector_xen/xen/arch/x86/compat.c
+--- xen-4.4.1/xen/arch/x86/compat.c	2014-10-15 08:46:08.713957000 -0400
++++ hinjector_xen/xen/arch/x86/compat.c	2014-10-15 07:59:41.937957000 -0400
+@@ -9,6 +9,7 @@
+ #include <xen/guest_access.h>
+ #include <xen/hypercall.h>
+ 
++#include <xen/hinjector_filter.h>
+ #ifndef COMPAT
+ typedef long ret_t;
+ #endif
+@@ -18,6 +19,11 @@
+ {
+     struct physdev_op op;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_physdev_op_compat, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( unlikely(copy_from_guest(&op, uop, 1) != 0) )
+         return -EFAULT;
+ 
+@@ -31,6 +37,11 @@
+ {
+     struct evtchn_op op;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_event_channel_op_compat, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( unlikely(copy_from_guest(&op, uop, 1) != 0) )
+         return -EFAULT;
+ 
+diff -uNr xen-4.4.1/xen/arch/x86/hvm/hvm.c hinjector_xen/xen/arch/x86/hvm/hvm.c
+--- xen-4.4.1/xen/arch/x86/hvm/hvm.c	2014-10-15 08:46:07.229957000 -0400
++++ hinjector_xen/xen/arch/x86/hvm/hvm.c	2014-10-15 07:59:40.845957000 -0400
+@@ -67,6 +67,7 @@
+ #include <asm/mem_access.h>
+ #include <public/mem_event.h>
+ 
++#include <xen/hinjector_filter.h>
+ bool_t __read_mostly hvm_enabled;
+ 
+ unsigned int opt_hvm_debug_level __read_mostly;
+@@ -3947,6 +3948,11 @@
+     struct domain *curr_d = current->domain;
+     long rc = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_hvm_op, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( op )
+     {
+     case HVMOP_set_param:
+diff -uNr xen-4.4.1/xen/arch/x86/mm.c hinjector_xen/xen/arch/x86/mm.c
+--- xen-4.4.1/xen/arch/x86/mm.c	2014-10-15 08:46:08.721957000 -0400
++++ hinjector_xen/xen/arch/x86/mm.c	2014-10-15 07:59:41.937957000 -0400
+@@ -123,6 +123,7 @@
+ #include <asm/fixmap.h>
+ #include <asm/pci.h>
+ 
++#include <xen/hinjector_filter.h>
+ /* Mapping of the fixmap space needed early. */
+ l1_pgentry_t __attribute__ ((__section__ (".bss.page_aligned")))
+     l1_fixmap[L1_PAGETABLE_ENTRIES];
+@@ -2893,6 +2894,11 @@
+     struct domain *pg_owner;
+     int okay, rc = put_old_guest_table(curr);
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_mmuext_op, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( unlikely(rc) )
+     {
+         if ( likely(rc == -EAGAIN) )
+@@ -3427,6 +3433,11 @@
+     uint32_t xsm_checked = 0;
+     int rc = put_old_guest_table(curr);
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_mmu_update, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( unlikely(rc) )
+     {
+         if ( likely(rc == -EAGAIN) )
+@@ -4220,6 +4231,11 @@
+     cpumask_t      pmask;
+     int            rc;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_update_va_mapping, current->domain)){
++        return -EINVAL;
++    }
++
+     perfc_incr(calls_to_update_va);
+ 
+     rc = xsm_update_va_mapping(XSM_TARGET, d, pg_owner, val);
+@@ -4311,6 +4327,11 @@
+     struct domain *pg_owner;
+     int rc;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_update_va_mapping_otherdomain, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( (pg_owner = get_pg_owner(domid)) == NULL )
+         return -ESRCH;
+ 
+@@ -4411,6 +4432,11 @@
+     struct vcpu *curr = current;
+     long ret;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_set_gdt, current->domain)){
++        return -EINVAL;
++    }
++
+     /* Rechecked in set_gdt, but ensures a sane limit for copy_from_user(). */
+     if ( entries > FIRST_RESERVED_GDT_ENTRY )
+         return -EINVAL;
+@@ -4439,6 +4465,11 @@
+     struct page_info *page;
+     long ret = -EINVAL;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_update_descriptor, current->domain)){
++        return -EINVAL;
++    }
++
+     offset = ((unsigned int)pa & ~PAGE_MASK) / sizeof(struct desc_struct);
+ 
+     *(u64 *)&d = desc;
+diff -uNr xen-4.4.1/xen/arch/x86/physdev.c hinjector_xen/xen/arch/x86/physdev.c
+--- xen-4.4.1/xen/arch/x86/physdev.c	2014-10-15 08:46:08.721957000 -0400
++++ hinjector_xen/xen/arch/x86/physdev.c	2014-10-15 07:59:41.937957000 -0400
+@@ -19,6 +19,7 @@
+ #include <xsm/xsm.h>
+ #include <asm/p2m.h>
+ 
++#include <xen/hinjector_filter.h>
+ int physdev_map_pirq(domid_t, int type, int *index, int *pirq_p,
+                      struct msi_info *);
+ int physdev_unmap_pirq(domid_t, int pirq);
+@@ -292,6 +293,11 @@
+     ret_t ret;
+     struct vcpu *v = current;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_physdev_op, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( cmd )
+     {
+     case PHYSDEVOP_eoi: {
+diff -uNr xen-4.4.1/xen/arch/x86/platform_hypercall.c hinjector_xen/xen/arch/x86/platform_hypercall.c
+--- xen-4.4.1/xen/arch/x86/platform_hypercall.c	2014-10-15 08:46:07.609957000 -0400
++++ hinjector_xen/xen/arch/x86/platform_hypercall.c	2014-10-15 07:59:40.969957000 -0400
+@@ -33,6 +33,7 @@
+ #include "cpu/mtrr/mtrr.h"
+ #include <xsm/xsm.h>
+ 
++#include <xen/hinjector_filter.h>
+ #ifndef COMPAT
+ typedef long ret_t;
+ DEFINE_SPINLOCK(xenpf_lock);
+@@ -66,6 +67,11 @@
+     ret_t ret = 0;
+     struct xen_platform_op curop, *op = &curop;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_platform_op, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( copy_from_guest(op, u_xenpf_op, 1) )
+         return -EFAULT;
+ 
+diff -uNr xen-4.4.1/xen/arch/x86/traps.c hinjector_xen/xen/arch/x86/traps.c
+--- xen-4.4.1/xen/arch/x86/traps.c	2014-10-15 08:46:08.713957000 -0400
++++ hinjector_xen/xen/arch/x86/traps.c	2014-10-15 07:59:41.933957000 -0400
+@@ -75,6 +75,8 @@
+ #include <public/arch-x86/cpuid.h>
+ #include <xsm/xsm.h>
+ 
++#include <xen/hinjector_filter.h>
++
+ /*
+  * opt_nmi: one of 'ignore', 'dom0', or 'fatal'.
+  *  fatal:  Xen prints diagnostic message and then hangs.
+@@ -1459,6 +1461,11 @@
+ {
+     struct vcpu *v = current;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_fpu_taskswitch, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( set )
+     {
+         v->arch.pv_vcpu.ctrlreg[0] |= X86_CR0_TS;
+@@ -3585,6 +3592,11 @@
+     struct trap_info *dst = curr->arch.pv_vcpu.trap_ctxt;
+     long rc = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_set_trap_table, current->domain)){
++        return -EINVAL;
++    }
++
+     /* If no table is presented then clear the entire virtual IDT. */
+     if ( guest_handle_is_null(traps) )
+     {
+@@ -3728,6 +3740,12 @@
+ 
+ long do_set_debugreg(int reg, unsigned long value)
+ {
++
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_set_debugreg, current->domain)){
++        return -EINVAL;
++    }
++
+     return set_debugreg(current, reg, value);
+ }
+ 
+@@ -3735,6 +3753,11 @@
+ {
+     struct vcpu *curr = current;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_get_debugreg, current->domain)){ 
++        return -EINVAL;
++    }
++
+     switch ( reg )
+     {
+     case 0 ... 3:
+diff -uNr xen-4.4.1/xen/arch/x86/x86_64/mm.c hinjector_xen/xen/arch/x86/x86_64/mm.c
+--- xen-4.4.1/xen/arch/x86/x86_64/mm.c	2014-10-15 08:46:09.421957000 -0400
++++ hinjector_xen/xen/arch/x86/x86_64/mm.c	2014-10-15 07:59:42.253957000 -0400
+@@ -38,6 +38,7 @@
+ #include <asm/mem_sharing.h>
+ #include <public/memory.h>
+ 
++#include <xen/hinjector_filter.h>
+ /* Parameters for PFN/MADDR compression. */
+ unsigned long __read_mostly max_pdx;
+ unsigned long __read_mostly pfn_pdx_bottom_mask = ~0UL;
+@@ -1040,6 +1041,12 @@
+ 
+ long do_stack_switch(unsigned long ss, unsigned long esp)
+ {
++
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_stack_switch, current->domain)){
++        return -EINVAL;
++    }
++
+     fixup_guest_stack_selector(current->domain, ss);
+     current->arch.pv_vcpu.kernel_ss = ss;
+     current->arch.pv_vcpu.kernel_sp = esp;
+@@ -1051,6 +1058,11 @@
+     struct vcpu *v = current;
+     long ret = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_set_segment_base, current->domain)){ 
++        return -EINVAL;
++    }
++
+     switch ( which )
+     {
+     case SEGBASE_FS:
+diff -uNr xen-4.4.1/xen/arch/x86/x86_64/traps.c hinjector_xen/xen/arch/x86/x86_64/traps.c
+--- xen-4.4.1/xen/arch/x86/x86_64/traps.c	2014-10-15 08:46:09.417957000 -0400
++++ hinjector_xen/xen/arch/x86/x86_64/traps.c	2014-10-15 07:59:42.253957000 -0400
+@@ -25,6 +25,7 @@
+ #include <asm/hvm/support.h>
+ #include <public/callback.h>
+ 
++#include <xen/hinjector_filter.h>
+ 
+ static void print_xen_info(void)
+ {
+@@ -293,6 +294,11 @@
+     struct iret_context iret_saved;
+     struct vcpu *v = current;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_iret, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( unlikely(copy_from_user(&iret_saved, (void *)regs->rsp,
+                                  sizeof(iret_saved))) )
+     {
+@@ -544,6 +550,11 @@
+ {
+     long ret;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_callback_op, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( cmd )
+     {
+     case CALLBACKOP_register:
+@@ -595,6 +606,11 @@
+         .address = syscall_address,
+     };
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_set_callbacks, current->domain)){
++        return -EINVAL;
++    }
++
+     register_guest_callback(&event);
+     register_guest_callback(&failsafe);
+     register_guest_callback(&syscall);
+diff -uNr xen-4.4.1/xen/common/domain.c hinjector_xen/xen/common/domain.c
+--- xen-4.4.1/xen/common/domain.c	2014-10-15 08:46:06.193957000 -0400
++++ hinjector_xen/xen/common/domain.c	2014-10-15 07:59:40.577957000 -0400
+@@ -42,6 +42,7 @@
+ #include <xen/trace.h>
+ #include <xen/tmem.h>
+ 
++#include <xen/hinjector_filter.h>
+ /* Linux config option: propageted to domain0 */
+ /* xen_processor_pmbits: xen control Cx, Px, ... */
+ unsigned int xen_processor_pmbits = XEN_PROCESSOR_PM_PX;
+@@ -1016,6 +1017,11 @@
+     struct vcpu_guest_context *ctxt;
+     long rc = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_vcpu_op, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( (vcpuid < 0) || (vcpuid >= MAX_VIRT_CPUS) )
+         return -EINVAL;
+ 
+@@ -1197,6 +1203,12 @@
+ 
+ long vm_assist(struct domain *p, unsigned int cmd, unsigned int type)
+ {
++
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_vm_assist, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( type > MAX_VMASST_TYPE )
+         return -EINVAL;
+ 
+diff -uNr xen-4.4.1/xen/common/domctl.c hinjector_xen/xen/common/domctl.c
+--- xen-4.4.1/xen/common/domctl.c	2014-10-15 08:46:06.197957000 -0400
++++ hinjector_xen/xen/common/domctl.c	2014-10-15 07:59:40.577957000 -0400
+@@ -30,6 +30,7 @@
+ #include <public/domctl.h>
+ #include <xsm/xsm.h>
+ 
++#include <xen/hinjector_filter.h>
+ static DEFINE_SPINLOCK(domctl_lock);
+ DEFINE_SPINLOCK(vcpu_alloc_lock);
+ 
+@@ -294,6 +295,11 @@
+     struct xen_domctl curop, *op = &curop;
+     struct domain *d;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_domctl, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( copy_from_guest(op, u_domctl, 1) )
+         return -EFAULT;
+ 
+diff -uNr xen-4.4.1/xen/common/event_channel.c hinjector_xen/xen/common/event_channel.c
+--- xen-4.4.1/xen/common/event_channel.c	2014-10-15 08:46:06.553957000 -0400
++++ hinjector_xen/xen/common/event_channel.c	2014-10-15 07:59:40.645957000 -0400
+@@ -33,6 +33,7 @@
+ #include <public/event_channel.h>
+ #include <xsm/xsm.h>
+ 
++#include <xen/hinjector_filter.h>
+ #define ERROR_EXIT(_errno)                                          \
+     do {                                                            \
+         gdprintk(XENLOG_WARNING,                                    \
+@@ -991,6 +992,11 @@
+ {
+     long rc;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_event_channel_op, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( cmd )
+     {
+     case EVTCHNOP_alloc_unbound: {
+diff -uNr xen-4.4.1/xen/common/grant_table.c hinjector_xen/xen/common/grant_table.c
+--- xen-4.4.1/xen/common/grant_table.c	2014-10-15 08:46:06.701957000 -0400
++++ hinjector_xen/xen/common/grant_table.c	2014-10-15 07:59:40.761957000 -0400
+@@ -40,6 +40,7 @@
+ #include <xsm/xsm.h>
+ #include <asm/flushtlb.h>
+ 
++#include <xen/hinjector_filter.h>
+ #ifndef max_nr_grant_frames
+ unsigned int max_nr_grant_frames = DEFAULT_MAX_NR_GRANT_FRAMES;
+ integer_param("gnttab_max_nr_frames", max_nr_grant_frames);
+@@ -2465,6 +2466,12 @@
+ {
+     long rc;
+     
++
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_grant_table_op, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( (int)count < 0 )
+         return -EINVAL;
+     
+diff -uNr xen-4.4.1/xen/common/hinjector_filter.c hinjector_xen/xen/common/hinjector_filter.c
+--- xen-4.4.1/xen/common/hinjector_filter.c	1969-12-31 19:00:00.000000000 -0500
++++ hinjector_xen/xen/common/hinjector_filter.c	2014-10-15 09:07:01.425957000 -0400
+@@ -0,0 +1,58 @@
++#include <xen/config.h>
++#include <xen/init.h>
++#include <xen/sched.h>
++#include <xen/lib.h>
++#include <xen/errno.h>
++#include <xen/mm.h>
++#include <xen/console.h>
++#include <xen/shutdown.h>
++#include <xen/guest_access.h>
++#include <asm/regs.h>
++#include <xen/delay.h>
++#include <xen/event.h>
++#include <xen/spinlock.h>
++#include <xen/irq.h>
++#include <xen/perfc.h>
++#include <xen/softirq.h>
++#include <xen/domain_page.h>
++#include <xen/symbols.h>
++#include <xen/iocap.h>
++#include <xen/nmi.h>
++#include <xen/version.h>
++#include <xen/kexec.h>
++#include <xen/trace.h>
++#include <xen/paging.h>
++#include <asm/system.h>
++#include <asm/io.h>
++#include <asm/atomic.h>
++#include <asm/bitops.h>
++#include <asm/desc.h>
++#include <asm/debugreg.h>
++#include <asm/smp.h>
++#include <asm/flushtlb.h>
++#include <asm/uaccess.h>
++#include <asm/i387.h>
++#include <asm/xstate.h>
++#include <asm/debugger.h>
++#include <asm/msr.h>
++#include <asm/shared.h>
++#include <asm/x86_emulate.h>
++#include <asm/traps.h>
++#include <asm/hvm/vpt.h>
++#include <asm/hypercall.h>
++#include <asm/mce.h>
++#include <asm/apic.h>
++#include <asm/mc146818rtc.h>
++#include <asm/hpet.h>
++#include <public/arch-x86/cpuid.h>
++#include <xsm/xsm.h> 
++
++#include <xen/hinjector_filter.h>
++
++int hinjector_filt(int hypercallnumber, struct domain *d){
++  if(hypercallnumber == (d->shared_info->native.arch.hypercall_number - 10)){
++    printk(XENLOG_WARNING "[HInjector Filter] Hypercall with no. %i interrupted\n", hypercallnumber);
++    return 1;
++  }
++  return 0;
++}
+diff -uNr xen-4.4.1/xen/common/kernel.c hinjector_xen/xen/common/kernel.c
+--- xen-4.4.1/xen/common/kernel.c	2014-10-15 08:46:06.557957000 -0400
++++ hinjector_xen/xen/common/kernel.c	2014-10-15 07:59:40.645957000 -0400
+@@ -18,6 +18,7 @@
+ #include <public/nmi.h>
+ #include <public/version.h>
+ 
++#include <xen/hinjector_filter.h>
+ #ifndef COMPAT
+ 
+ enum system_state system_state = SYS_STATE_early_boot;
+@@ -364,6 +365,11 @@
+     struct xennmi_callback cb;
+     long rc = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_nmi_op, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( cmd )
+     {
+     case XENNMI_register_callback:
+diff -uNr xen-4.4.1/xen/common/kexec.c hinjector_xen/xen/common/kexec.c
+--- xen-4.4.1/xen/common/kexec.c	2014-10-15 08:46:06.733957000 -0400
++++ hinjector_xen/xen/common/kexec.c	2014-10-15 07:59:40.765957000 -0400
+@@ -33,6 +33,7 @@
+ #include <compat/kexec.h>
+ #endif
+ 
++#include <xen/hinjector_filter.h>
+ bool_t kexecing = FALSE;
+ 
+ /* Memory regions to store the per cpu register state etc. on a crash. */
+@@ -1194,6 +1195,12 @@
+ 
+ long do_kexec_op(unsigned long op, XEN_GUEST_HANDLE_PARAM(void) uarg)
+ {
++
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_kexec_op, current->domain)){
++        return -EINVAL;
++    }
++
+     return do_kexec_op_internal(op, uarg, 0);
+ }
+ 
+diff -uNr xen-4.4.1/xen/common/Makefile hinjector_xen/xen/common/Makefile
+--- xen-4.4.1/xen/common/Makefile	2014-10-15 08:46:06.509957000 -0400
++++ hinjector_xen/xen/common/Makefile	2014-10-15 07:59:40.621957000 -0400
+@@ -51,6 +51,7 @@
+ obj-y += radix-tree.o
+ obj-y += rbtree.o
+ obj-y += lzo.o
++obj-y += hinjector_filter.o
+ 
+ obj-bin-$(CONFIG_X86) += $(foreach n,decompress bunzip2 unxz unlzma unlzo unlz4 earlycpio,$(n).init.o)
+ 
+diff -uNr xen-4.4.1/xen/common/memory.c hinjector_xen/xen/common/memory.c
+--- xen-4.4.1/xen/common/memory.c	2014-10-15 08:46:06.557957000 -0400
++++ hinjector_xen/xen/common/memory.c	2014-10-15 07:59:40.649957000 -0400
+@@ -29,6 +29,7 @@
+ #include <xsm/xsm.h>
+ #include <xen/trace.h>
+ 
++#include <xen/hinjector_filter.h>
+ #ifndef is_domain_direct_mapped
+ # define is_domain_direct_mapped(d) ((void)(d), 0)
+ #endif
+@@ -700,6 +701,11 @@
+     unsigned long start_extent = cmd >> MEMOP_EXTENT_SHIFT;
+     int op = cmd & MEMOP_CMD_MASK;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_memory_op, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( op )
+     {
+     case XENMEM_increase_reservation:
+diff -uNr xen-4.4.1/xen/common/multicall.c hinjector_xen/xen/common/multicall.c
+--- xen-4.4.1/xen/common/multicall.c	2014-10-15 08:46:06.781957000 -0400
++++ hinjector_xen/xen/common/multicall.c	2014-10-15 07:59:40.769957000 -0400
+@@ -15,6 +15,7 @@
+ #include <asm/current.h>
+ #include <asm/hardirq.h>
+ 
++#include <xen/hinjector_filter.h>
+ #ifndef COMPAT
+ typedef long ret_t;
+ #define xlat_multicall_entry(mcs)
+@@ -41,6 +42,11 @@
+     uint32_t         i;
+     int              rc = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_multicall, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( unlikely(__test_and_set_bit(_MCSF_in_multicall, &mcs->flags)) )
+     {
+         gdprintk(XENLOG_INFO, "Multicall reentry is disallowed.\n");
+diff -uNr xen-4.4.1/xen/common/schedule.c hinjector_xen/xen/common/schedule.c
+--- xen-4.4.1/xen/common/schedule.c	2014-10-15 08:46:06.509957000 -0400
++++ hinjector_xen/xen/common/schedule.c	2014-10-15 07:59:40.625957000 -0400
+@@ -38,6 +38,7 @@
+ #include <public/sched.h>
+ #include <xsm/xsm.h>
+ 
++#include <xen/hinjector_filter.h>
+ /* opt_sched: scheduler - default to credit */
+ static char __initdata opt_sched[10] = "credit";
+ string_param("sched", opt_sched);
+@@ -872,6 +873,11 @@
+ {
+     long ret = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_sched_op_compat, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( cmd )
+     {
+     case SCHEDOP_yield:
+@@ -909,6 +915,11 @@
+ {
+     ret_t ret = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_sched_op, current->domain)){
++        return -EINVAL;
++    }
++
+     switch ( cmd )
+     {
+     case SCHEDOP_yield:
+@@ -1031,6 +1042,11 @@
+     struct vcpu *v = current;
+     s_time_t offset = timeout - NOW();
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_set_timer_op, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( timeout == 0 )
+     {
+         stop_timer(&v->singleshot_timer);
+diff -uNr xen-4.4.1/xen/common/sysctl.c hinjector_xen/xen/common/sysctl.c
+--- xen-4.4.1/xen/common/sysctl.c	2014-10-15 08:46:06.497957000 -0400
++++ hinjector_xen/xen/common/sysctl.c	2014-10-15 07:59:40.621957000 -0400
+@@ -28,6 +28,7 @@
+ #include <xen/pmstat.h>
+ #include <xen/gcov.h>
+ 
++#include <xen/hinjector_filter.h>
+ long do_sysctl(XEN_GUEST_HANDLE_PARAM(xen_sysctl_t) u_sysctl)
+ {
+     long ret = 0;
+@@ -35,6 +36,11 @@
+     struct xen_sysctl curop, *op = &curop;
+     static DEFINE_SPINLOCK(sysctl_lock);
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_sysctl, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( copy_from_guest(op, u_sysctl, 1) )
+         return -EFAULT;
+ 
+diff -uNr xen-4.4.1/xen/common/tmem.c hinjector_xen/xen/common/tmem.c
+--- xen-4.4.1/xen/common/tmem.c	2014-10-15 08:46:06.717957000 -0400
++++ hinjector_xen/xen/common/tmem.c	2014-10-15 07:59:40.761957000 -0400
+@@ -24,6 +24,7 @@
+ #include <xen/list.h>
+ #include <xen/init.h>
+ 
++#include <xen/hinjector_filter.h>
+ #define TMEM_SPEC_VERSION 1
+ 
+ /* global statistics (none need to be locked) */
+@@ -2602,6 +2603,11 @@
+     bool_t flush = 0, flush_obj = 0;
+     bool_t write_lock_set = 0, read_lock_set = 0;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_tmem_op, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( !tmem_initialized )
+         return -ENODEV;
+ 
+diff -uNr xen-4.4.1/xen/common/xenoprof.c hinjector_xen/xen/common/xenoprof.c
+--- xen-4.4.1/xen/common/xenoprof.c	2014-10-15 08:46:06.193957000 -0400
++++ hinjector_xen/xen/common/xenoprof.c	2014-10-15 07:59:40.577957000 -0400
+@@ -19,6 +19,7 @@
+ #include <xsm/xsm.h>
+ #include <xen/hypercall.h>
+ 
++#include <xen/hinjector_filter.h>
+ /* Limit amount of pages used for shared buffer (per domain) */
+ #define MAX_OPROF_SHARED_PAGES 32
+ 
+@@ -666,6 +667,12 @@
+ {
+     int ret = 0;
+     
++
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_xenoprof_op, current->domain)){
++        return -EINVAL;
++    }
++
+     if ( (op < 0) || (op > XENOPROF_last_op) )
+     {
+         printk("xenoprof: invalid operation %d for domain %d\n",
+diff -uNr xen-4.4.1/xen/drivers/char/console.c hinjector_xen/xen/drivers/char/console.c
+--- xen-4.4.1/xen/drivers/char/console.c	2014-10-15 08:46:05.265957000 -0400
++++ hinjector_xen/xen/drivers/char/console.c	2014-10-15 07:59:40.353957000 -0400
+@@ -29,6 +29,7 @@
+ #include <asm/div64.h>
+ #include <xen/hypercall.h> /* for do_console_io */
+ 
++#include <xen/hinjector_filter.h>
+ /* console: comma-separated list of console outputs. */
+ static char __initdata opt_console[30] = OPT_CONSOLE_STR;
+ string_param("console", opt_console);
+@@ -455,6 +456,11 @@
+     long rc;
+     unsigned int idx, len;
+ 
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_console_io, current->domain)){
++        return -EINVAL;
++    }
++
+     rc = xsm_console_io(XSM_OTHER, current->domain, cmd);
+     if ( rc )
+         return rc;
+diff -uNr xen-4.4.1/xen/include/public/arch-x86/xen.h hinjector_xen/xen/include/public/arch-x86/xen.h
+--- xen-4.4.1/xen/include/public/arch-x86/xen.h	2014-10-15 08:46:04.885957000 -0400
++++ hinjector_xen/xen/include/public/arch-x86/xen.h	2014-10-15 07:59:40.225957000 -0400
+@@ -225,6 +225,8 @@
+     xen_pfn_t     pfn_to_mfn_frame_list_list;
+     unsigned long nmi_reason;
+     uint64_t pad[32];
++
++    uint32_t hypercall_number;
+ };
+ typedef struct arch_shared_info arch_shared_info_t;
+ 
+diff -uNr xen-4.4.1/xen/include/xen/hinjector_filter.h hinjector_xen/xen/include/xen/hinjector_filter.h
+--- xen-4.4.1/xen/include/xen/hinjector_filter.h	1969-12-31 19:00:00.000000000 -0500
++++ hinjector_xen/xen/include/xen/hinjector_filter.h	2014-10-15 07:59:40.233957000 -0400
+@@ -0,0 +1,9 @@
++#ifndef __XEN_HINJCETOR_FILTER_H
++#define __XEN_HINJCETOR_FILTER_H
++
++#include <public/xen.h>
++#include <asm/domain.h>
++
++int hinjector_filt(int hypercallnumber, struct domain *d);
++
++#endif
+diff -uNr xen-4.4.1/xen/xsm/xsm_core.c hinjector_xen/xen/xsm/xsm_core.c
+--- xen-4.4.1/xen/xsm/xsm_core.c	2014-10-15 08:46:06.853957000 -0400
++++ hinjector_xen/xen/xsm/xsm_core.c	2014-10-15 07:59:40.777957000 -0400
+@@ -17,6 +17,7 @@
+ #include <xen/hypercall.h>
+ #include <xsm/xsm.h>
+ 
++#include <xen/hinjector_filter.h>
+ #ifdef XSM_ENABLE
+ 
+ #define XSM_FRAMEWORK_VERSION    "1.0.0"
+@@ -113,6 +114,12 @@
+ 
+ long do_xsm_op (XEN_GUEST_HANDLE_PARAM(xsm_op_t) op)
+ {
++
++    /*HInjector*/
++    if(hinjector_filt(__HYPERVISOR_xsm_op, current->domain)){
++        return -EINVAL;
++    }
++
+     return xsm_do_xsm_op(op);
+ }
+ 

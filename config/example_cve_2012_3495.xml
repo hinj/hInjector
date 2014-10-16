@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario rate="1" repeat="1">
+ <hcall name="physdev_op" repeat="100">
+  <parameter number="1">
+   <value type="int">23</value>
+  </parameter>
+  <parameter number="2">
+   <struct name="physdev_get_free_pirq">
+    <member name="type">
+     <value type="int">1</value>
+    </member>
+   </struct>
+  </parameter>
+ </hcall>
+</scenario>

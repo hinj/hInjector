@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario rate="1" repeat="1">
+ <hcall name="get_debugreg" repeat="2">
+  <parameter number="1">
+   <regular>
+    <value type="int">1</value>
+    <value type="int">3</value>
+    <value type="int">4</value>
+   </regular>
+  </parameter>
+ </hcall>
+ <hcall name="set_trap_table" repeat="1">
+  <parameter>
+   <struct name="trap_info">
+    <member name="vector">
+     <regular>
+      <range>
+       <lower>0</lower>
+       <upper>10</upper>
+      </range>
+     </regular>
+    </member>
+    <member name="flags">
+     <value type="int">10</value>
+    </member>
+    <member name="cs">
+     <value type="int">2</value>
+    </member>
+    <member name="address">
+     <value type="int">3</value>
+    </member>
+   </struct>
+  </parameter>
+ </hcall>
+</scenario>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hnumbers>
+<hnum name="set_trap_table">0</hnum>
+<hnum name="mmu_update">1</hnum>
+<hnum name="set_gdt">2</hnum>
+<hnum name="stack_switch">3</hnum>
+<hnum name="set_callbacks">4</hnum>
+<hnum name="fpu_taskswitch">5</hnum>
+<hnum name="sched_op_compat">6</hnum>
+<hnum name="dom0_op">7</hnum>
+<hnum name="set_debugreg">8</hnum>
+<hnum name="get_debugreg">9</hnum>
+<hnum name="update_descriptor">10</hnum>
+<hnum name="nothing">11</hnum>
+<hnum name="memory_op">12</hnum>
+<hnum name="multicall">13</hnum>
+<hnum name="update_va_mapping">14</hnum>
+<hnum name="set_timer_op">15</hnum>
+<hnum name="event_channel_op_compat">16</hnum>
+<hnum name="xen_version">17</hnum>
+<hnum name="console_io">18</hnum>
+<hnum name="physdev_op_compat">19</hnum>
+<hnum name="grant_table_op">20</hnum>
+<hnum name="vm_assist">21</hnum>
+<hnum name="update_va_mapping_otherdomain">22</hnum>
+<hnum name="iret">23</hnum>
+<hnum name="vcpu_op">24</hnum>
+<hnum name="set_segment_base">25</hnum>
+<hnum name="mmuext_op">26</hnum>
+<hnum name="acm_op">27</hnum>
+<hnum name="nmi_op">28</hnum>
+<hnum name="sched_op">29</hnum>
+<hnum name="callback_op">30</hnum>
+<hnum name="xenoprof_op">31</hnum>
+<hnum name="event_channel_op">32</hnum>
+<hnum name="physdev_op">33</hnum>
+<hnum name="hvm_op">34</hnum>
+<hnum name="tmem_op">38</hnum>
+</hnumbers>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<scenario rate="1" repeat="1">
+ <hcall name="memory_op" repeat="1">
+  <parameter number="1">
+   <value type="int">11</value>
+  </parameter>
+  <parameter number="2">
+   <struct name="xen_memory_exchange">
+    <member name="in.nr_extents">
+     <value type="int">1</value>
+    </member>
+    <member name="in.extent_order">
+     <value type="int">0</value>
+    </member>
+    <member name="in.extent_start">
+     <value type="int">1</value>
+    </member>
+    <member name="in.domid">
+     <value type="int">2</value>
+    </member>
+    <member name="out.nr_extents">
+     <value type="int">16</value>
+    </member>
+    <member name="out.extent_order">
+     <value type="int">1</value>
+    </member>
+    <member name="out.extent_start">
+     <value type="int">18446603885977010000</value>
+    </member>
+    <member name="out.domid">
+     <value type="int">2</value>
+    </member>
+   </struct>
+  </parameter>
+ </hcall>
+</scenario>
