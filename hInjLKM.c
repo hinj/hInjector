@@ -703,7 +703,7 @@ static int __init hello_init(void)
   }
 
   if(HYPERVISOR_shared_info == &hinjXen_dummy_shared_info){
-    printk(KERN_ALERT "shared_info not mapped");
+    printk(KERN_ALERT "shared_info not mapped.\n");
   }
 
   /* Setting up a Netlink socket*/
