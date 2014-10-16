@@ -1,4 +1,5 @@
 /*
+* Tested on Xen 4.4.1, Host OS: Debian 7.0, 64 bit (amd64)
 * To Do's:
 *   --- Error handling;
 *   --- Verification of injection scenario configuration file;
