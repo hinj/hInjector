@@ -9,7 +9,7 @@
 *   --- Improve the method for adding the field hypercall_number in the shared_info structure (e.g., do not add hypercall_number after padding[32]);
 *   --- Improve the generation of struct hypercall parameter addresses (use struct names to create struct objects instead of names of first struct members);
 *        --- Create macros/functionality for storing values in an arbitrary number of members per struct (e.g., from 1 member to the maximal number of members of a given struct);
-*   --- Create HInjector LKM header file(s);
+*   --- Create hInjector LKM header file(s);
 *   --- Fix the memory leak related to hinjHcall_input and hinjMembers
 */
 
@@ -137,7 +137,7 @@ MODULE_LICENSE("GPL");
 
 
 /* 
-* timersub helps the conversion of system time (format s:msec) to HInjector internal time 
+* timersub helps the conversion of system time (format s:msec) to hInjector internal time 
 *   --- taken from the BSD kernel.
 */
 
@@ -730,7 +730,7 @@ static int __init hello_init(void)
 /* The __exit function. */
 static void __exit hello_cleanup(void)
 {
-    printk(KERN_INFO "HInjector LKM terminated.\n");
+    printk(KERN_INFO "hInjector LKM terminated.\n");
     netlink_kernel_release(hinjNl_sk);
 }
 
