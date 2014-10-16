@@ -44,7 +44,7 @@ int main(int argc, char **argv){
   nlh->nlmsg_flags = 0;
 
   int counter = 1;
-  printf("Activating HInjector LKM...\n");
+  printf("Activating hInjector LKM...\n");
 
   for(counter = 1; counter < argc; counter++){
     strcpy(NLMSG_DATA(nlh), argv[counter]);
@@ -101,6 +101,6 @@ int main(int argc, char **argv){
   close(sock_fd);
   
   system("/sbin/rmmod hInjLKM.ko");
-  printf("HInjector terminated successfully.\n");
+  printf("hInjector terminated successfully.\n");
   return 0;
 }
