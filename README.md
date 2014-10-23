@@ -35,6 +35,6 @@ Example:
 
 Location of "arch_shared_info" in the Linux kernel: /usr/src/linux-header-$(uname -r)/arch/x86/include/asm/xen/interface.h
 
-Location of "arch_shared_info" in the Xen kernel: <<path>>/xen-4.4.1/xen/include/public/arch-x86/xen.h 
+Location of "arch_shared_info" in the Xen kernel: [path]/xen-4.4.1/xen/include/public/arch-x86/xen.h 
 
 
