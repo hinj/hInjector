@@ -70,6 +70,6 @@ To check whether hInjector has completed its task, issue the command "dmesg". Th
 
 Note: Some hypercalls take structures as input parameters. The current release of hInjector supports only a few structures and extended support is under development. Please contact Aleksandar Milenkoski (aleksandar.milenkoski@uni-wuerzburg.de) to inquiry on this topic. 
 
-Note: The current release of hInjector does not verify the syntax of configuration files and will not inject hypercall attacks in case an erroneous configuration file is used. If you create your own configuration files, please use the existing files as basis. 
+Note: The current release of hInjector does not verify the syntax of configuration files and will not successfully inject hypercall attacks in case an erroneous configuration file is used. If you create your own configuration files, please use the existing files as basis. 
 
 
