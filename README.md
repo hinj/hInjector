@@ -55,5 +55,6 @@ Location of "arch_shared_info" in the Xen kernel: [path]/xen-4.4.1/xen/include/p
 Usage
 =========
 
-hInjector 
+Run hInjector from the virtual machine from where hypercall attacks should be injected:
 
+$ python 
