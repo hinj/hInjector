@@ -2,6 +2,7 @@ hInjector
 =========
 
 Lead architect: Aleksandar Milenkoski (aleksandar.milenkoski@uni-wuerzburg.de)
+
 Development: Christoph Sendner (christoph.sendner@stud-mail.uni-wuerzburg.de)
 
 
