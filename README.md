@@ -69,6 +69,7 @@ The used configuration file should be located in the folder "config". This folde
 To check whether hInjector has completed its task, issue the command "dmesg". The output of this command should contain records about invoked hypercalls by the hInjector loadable kernel module. Further, run the command "xl dmesg" in the operating system that administers the Xen virtualized environment (i.e., the Dom0). The output of this command should contain records about intercepted hypercalls by the Filter component of hInjector, whose execution had been interrupted.
 
 Note: Some hypercalls take structures as input parameters. hInjector currently supports only a few structures and further support is under development. Please contact Aleksandar Milenkoski (aleksandar.milenkoski@uni-wuerzburg.de) about inquiries on this topic. 
+
 Note: hInjector currently does not verify the syntax of configuration files and will not inject hypercall attacks in case an erroneous configuration file is used. If you create your own configuration files, please use the existing files as basis. 
 
 
