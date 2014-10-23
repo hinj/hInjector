@@ -4,13 +4,17 @@ hInjector
 hInjector is a customizable framework for injecting hypercall attacks during regular operation of a partially or fully paravirtualized guest VM in a Xen-based environment. The attacks that can be injected using hInjector conform to the following attack models:
 
 (i) execution of a single hypercall with:
+
 ◦ regular parameter value(s) (i.e., regular hypercall), or
+
 ◦ parameter value(s) specifically crafted for triggering a given vulnerability, which includes values inside and
 outside valid value domains, or
 
-(ii) execution of a series of regular hypercalls in a given order,
-including:
-◦ repetitive execution of a single hypercall, or ◦ repetitive execution of multiple hypercalls.
+(ii) execution of a series of regular hypercalls in a given order, including:
+
+◦ repetitive execution of a single hypercall, or 
+
+◦ repetitive execution of multiple hypercalls.
 
 We constructed the above attack models based on analyzing publicly disclosed vulnerabilities of Xen’s hypercall handlers. 
 
