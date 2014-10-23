@@ -29,7 +29,7 @@ $ patch -p1 < ../hInjector.patch
 
 5) Access the hInjector folder and type "make".
 
-6) Make sure that the structure "arch_shared_info" used by the kernel of the virtual machine is identical to the structure "arch_shared_info" used by the Xen kernel. The best way to do this is to open the files where the structures are written, compare the declarations of "arch_shared_info", and make changes if necessary. 
+6) Make sure that the structure "arch_shared_info" used by the kernel of the virtual machine is identical to the structure "arch_shared_info" used by the Xen kernel. The best way to do this is to open the files where the structures are declared, compare the declarations of "arch_shared_info", and make changes if necessary. 
 
 Example:
 
