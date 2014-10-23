@@ -65,5 +65,8 @@ $ python hInjector.py example.xml
 
 The used configuration file should be located in the folder "config". This folder already contains a few example configuration files (i.e., default.xml, example.xml, and example2.xml) and configuration files that enable the injection of attacks that trigger the vulnerabilities CVE-2012-3495, CVE-2012-5510, and CVE-2012-5513 (i.e., example_cve_2012_3495.xml, example_cve_2012_5510.xml, and example_cve_2012_5513.xml). If no configuration file is specified, the file "default.xml", stored in the "config" folder, is used. 
 
-To check whether hInjector has completed its task, issue the command "dmesg". The output of this command should contain records about invoked hypercalls by the hInjector loadable kernel module. Further, run the command "xl dmesg" in the operating system that administers the Xen virtualized environment (i.e., the Dom0). The output of this command should contain records about intercepted hypercalls by the Filter component of hInjector, whose execution had been interrupted. 
+To check whether hInjector has completed its task, issue the command "dmesg". The output of this command should contain records about invoked hypercalls by the hInjector loadable kernel module. Further, run the command "xl dmesg" in the operating system that administers the Xen virtualized environment (i.e., the Dom0). The output of this command should contain records about intercepted hypercalls by the Filter component of hInjector, whose execution had been interrupted.
+
+Note: Some hypercalls take structures as input parameters. hInjector currently supports only a few structures and further support is under development. Please contact Aleksandar Milenkoski (aleksandar.milenkoski@uni-wuerzburg.de) about inquiries on this topic. 
+
 
