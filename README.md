@@ -1,14 +1,25 @@
 hInjector
 =========
 
-Lead architect: Aleksandar Milenkoski (aleksandar.milenkoski@uni-wuerzburg.de)
+hInjector is a customizable frame- work for injecting hypercall attacks during regular operation of a partially or fully paravirtualized guest VM in a Xen-based environment. The attacks that can be injected using hInjector conform to the following attack models:
 
-Development: Christoph Sendner (christoph.sendner@stud-mail.uni-wuerzburg.de)
+(i) execution of a single hypercall with:
+◦ regular parameter value(s) (i.e., regular hypercall), or
+◦ parameter value(s) specifically crafted for triggering a given vulnerability, which includes values inside and
+outside valid value domains, or
+
+(ii) execution of a series of regular hypercalls in a given order,
+including:
+◦ repetitive execution of a single hypercall, or ◦ repetitive execution of multiple hypercalls.
+
+We constructed the above attack models based on analyzing publicly disclosed vulnerabilities of Xen’s hypercall handlers. 
 
 
-Tested in the following environment: Xen-4.4.1 (Intel 64 bit), a fully paravirtualized virtual machine (Intel 64 bit). 
+-- Lead architect: Aleksandar Milenkoski (aleksandar.milenkoski@uni-wuerzburg.de)
 
-The virtual machine from where hypercalls are injected has to be a Linux system.
+-- Development: Christoph Sendner (christoph.sendner@stud-mail.uni-wuerzburg.de)
+
+-- hInjector was tested in the following environment: Xen-4.4.1 (Intel 64 bit), a fully paravirtualized virtual machine running on Linux Debian (Intel 64 bit). 
 
 Installation
 =========
