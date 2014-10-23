@@ -19,7 +19,7 @@ Installation
 
 Example:
 
-$ cd <<path>>/xen-4.4.1
+$ cd [path]/xen-4.4.1
 
 $ patch -p1 < ../hInjector.patch
 
