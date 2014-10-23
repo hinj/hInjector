@@ -8,6 +8,7 @@ Development: Christoph Sendner (christoph.sendner@stud-mail.uni-wuerzburg.de)
 
 Tested in the following environment: Xen-4.4.1 (Intel 64 bit), a fully paravirtualized virtual machine (Intel 64 bit). 
 
+The virtual machine from where hypercalls are injected has to be a Linux system.
 
 Installation
 =========
