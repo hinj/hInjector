@@ -32,7 +32,7 @@ Installation
 
 2) Copy the file hInjector.patch to [path].
 
-3) Patch Xen using the file hInjector.patch.
+3) Patch Xen using the file hInjector.patch:
 
 $ cd [path]/xen-4.4.1
 
