@@ -57,4 +57,9 @@ Usage
 
 Run hInjector from the virtual machine from where hypercall attacks should be injected:
 
-$ python 
+$ python hInjector.py <configuration file>
+
+Example:
+
+$ python hInjector.py <configuration file>
+
