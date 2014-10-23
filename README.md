@@ -64,3 +64,5 @@ Example:
 $ python hInjector.py example.xml 
 
 The used configuration file should be located in the folder "config". This folder already contains a few example configuration files (i.e., default.xml, example.xml, and example2.xml) and configuration files that enable the injection of attacks that trigger the vulnerabilities CVE-2012-3495, CVE-2012-5510, and CVE-2012-5513 (i.e., example_cve_2012_3495.xml, example_cve_2012_5510.xml, and example_cve_2012_5513.xml). If no configuration file is specified, the file "default.xml", stored in the "config" folder, is used. 
+
+
