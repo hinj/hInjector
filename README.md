@@ -61,5 +61,11 @@ $ python hInjector.py <configuration file>
 
 Example:
 
-$ python hInjector.py <configuration file>
+$ python hInjector.py example.xml 
+
+The used configuration file should be located in the folder "config". This folder already contains a few example configuration files (i.e., default.xml, example.xml, and example2.xml) and configuration files that enable the injection of attacks that trigger the vulnerabilities 
+
+Example configuration files are located in the "config" folder. 
+
+
 
