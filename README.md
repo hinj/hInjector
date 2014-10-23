@@ -13,7 +13,7 @@ The virtual machine from where hypercalls are injected has to be a Linux system.
 Installation
 =========
 
-1) Download the source code of Xen. 
+1) Download the source code of Xen and extract it. In the following, [path] is the path to the location where the source code of Xen is extracted.
 
 2) Patch Xen using the file hInjector.patch.
 
