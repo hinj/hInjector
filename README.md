@@ -18,7 +18,7 @@ outside valid value domains, or
 
 We constructed the above attack models based on analyzing publicly disclosed vulnerabilities of Xen’s hypercall handlers. 
 
-The current release of hInjector consists of the following components: LKM, Filter, Configuration, and Logs. More information about the architecture of hInjector can be found in the short paper entitled "HInjector: Injecting Hypercall Attacks for Evaluating VMI-based Intrusion Detection Systems", which can be found online. 
+The current release of hInjector consists of the following components: LKM, Filter, Configuration, and Logs. More information about the architecture of hInjector can be found in the short paper entitled "HInjector: Injecting Hypercall Attacks for Evaluating VMI-based Intrusion Detection Systems", which can be found online. Also accepted by RAID 2015 with "Evaluation of Intrusion Detection Systems in Virtualized Environments Using Attack Injection" (http://se2.informatik.uni-wuerzburg.de/pa/uploads/papers/paper-893.pdf).
 
 -- Lead architect: Aleksandar Milenkoski (aleksandar.milenkoski@uni-wuerzburg.de)
 
